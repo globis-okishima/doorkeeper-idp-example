@@ -59,3 +59,5 @@ gem "devise", "~> 4.8"
 gem "doorkeeper", "~> 5.5"
 
 gem "omniauth", "~> 2.0"
+
+gem "oauth2", "~> 1.4"
