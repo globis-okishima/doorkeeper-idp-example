@@ -1,24 +1,39 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 1. リポジトリのclone
 
-Things you may want to cover:
+```
+cd /path/to/somewhere_work_dir
+git clone https://github.com/globis-okishima/doorkeeper-idp-example.git
+```
 
-* Ruby version
+## 2. DBコンテナの用意
 
-* System dependencies
+他に依存するミドルウェアとしてDBなどがあるが、別個コンテナ作る(docker-compose で一元的に管理したりは今回はしない)
 
-* Configuration
+```
+docker container run --name mysql-local -it -e MYSQL_ROOT_PASSWORD='password' -p 33306:3306 mysql:5.7.30
+```
 
-* Database creation
+上記に接続できるように `database.yml` を編集する
 
-* Database initialization
+## 3. アプリケーションコンテナの起動
 
-* How to run the test suite
+```
+docker build -t doorkeeper-idp-example . -f Dockerfile
+docker container run --name doorkeeper-idp-example -it -p 33000:3000 -v $PWD:/webapp doorkeeper-idp-example
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+docker container exec doorkeeper-idp-example rake db:create db:migrate
+```
 
-* Deployment instructions
+## 4. アカウントの用意
 
-* ...
+* [http://localhost:33000/users/sign_up](http://localhost:33000/users/sign_up) へアクセスする
+* 適当にアカウント作る
+* 上記ユーザーのレコードの `admin` カラムの値を1にする
+
+上記ユーザーでログインしたら下記でOAuthクライアントの管理ができるようになる
+
+[http://localhost:33000/oauth/applications](http://localhost:33000/oauth/applications)
